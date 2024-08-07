@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="build-source" pattern="file[cherry-website]:overrides/*||file[cherry-website]:overrides//*||file[cherry-website]:docs//*||file[cherry-website]:src//*||file:mkdocs.yml||file:scripts/build.js||file:scripts/clear.js" />
+</component>

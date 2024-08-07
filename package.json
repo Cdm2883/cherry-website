@@ -1,0 +1,12 @@
+{
+  "name": "cherry-website",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.js",
+    "clear": "node scripts/clear.js"
+  },
+  "devDependencies": {
+    "@types/node": "^22.1.0",
+    "esbuild": "^0.23.0"
+  }
+}

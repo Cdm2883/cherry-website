@@ -1,1 +1,28 @@
-site_name: My Docs
+site_name: 樱落绘境
+#site_url: https://mydomain.org/mysite
+site_description: 樱落绘境官网
+
+theme:
+  name: material
+  custom_dir: overrides
+  language: zh
+  logo: assets/images/title.png
+  favicon: assets/images/logo.png
+  palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: 切换到日间模式
+    - media: "(prefers-color-scheme: light)"
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/brightness-7
+        name: 切换到深色模式
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/brightness-4
+        name: 切换到系统默认
