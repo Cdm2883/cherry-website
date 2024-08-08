@@ -148,6 +148,72 @@ export default class ThreeViewport {
             this.scene.add(light);
         }
 
+        // petals
+        {
+            const regions = [
+                [ [ -18.383, -6.058, -8.695 ], [ -25.021, -5.090, 1.545 ] ],
+            ].map(
+                ([ [ minX, minY, minZ ], [ maxX, maxY, maxZ ] ]) =>
+                ({ min: { x: minX, y: minY, z: minZ }, max: { x: maxX, y: maxY, z: maxZ } })
+            );
+
+            const petalTexture = new THREE.TextureLoader().load('assets/images/cherry_petal_atlas.png');
+            petalTexture.magFilter = THREE.NearestFilter;
+            petalTexture.minFilter = THREE.NearestFilter;
+            const petalMaterial = new THREE.MeshBasicMaterial({
+                map: petalTexture,
+                transparent: true,
+                side: THREE.DoubleSide,
+            });
+            const petalGeometry = new THREE.PlaneGeometry(.2, .2);
+            const petalSetRandomPosition = (petal, region) => petal.position.set(
+                THREE.MathUtils.lerp(region.min.x, region.max.x, Math.random()),
+                THREE.MathUtils.lerp(region.min.y, region.max.y, Math.random() * 10),
+                THREE.MathUtils.lerp(region.min.z, region.max.z, Math.random())
+            );
+            const createPetal = region => {
+                const petal = new THREE.Mesh(petalGeometry, petalMaterial);
+
+                const petalIndex = Math.floor(Math.random() * 4);
+                const uOffset = (petalIndex % 4) * 0.25;
+                const vOffset = Math.floor(petalIndex / 4) * 0.33;
+                petal.material.map.offset.set(uOffset, vOffset);
+                petal.material.map.repeat.set(0.25, 0.33);
+
+                petalSetRandomPosition(petal, region);
+                petal.rotation.set(
+                    Math.random() * Math.PI,
+                    Math.random() * Math.PI,
+                    Math.random() * Math.PI
+                );
+                petal.scale.setScalar(Math.random() * 0.5 + 0.5);
+
+                return petal;
+            };
+            const petalsGroups = regions.map(region => {
+                const group = new THREE.Group();
+                for (let i = 0; i < 20; i++) group.add(createPetal(region));
+                return group;
+            });
+            petalsGroups.forEach(group => this.scene.add(group));
+
+            const animatePetal = (petal, region) => {
+                petal.position.y -= 0.02;
+
+                // 风向影响
+                petal.position.x += 0.001;
+                petal.position.z += 0.003;
+
+                // 左右摇摆
+                petal.rotation.z += Math.sin(petal.position.y * 0.1) * 0.02;
+
+                // 重置位置
+                if (petal.position.y <= -15) petalSetRandomPosition(petal, region);
+            };
+            this.animatePetals = () => petalsGroups.forEach((group, i) =>
+                group.children.forEach(petal => animatePetal(petal, regions[i])));
+        }
+
         this.camera.position.set(-34, -12, -0.1);
         this.camera.rotation.set(0, THREE.MathUtils.degToRad(270), 0);
 
@@ -194,6 +260,8 @@ export default class ThreeViewport {
             this.currentZ = computedZ;
         }
         this.camera.position.z = this.currentZ;
+
+        this.animatePetals();
 
         this.composer.render();
     }
