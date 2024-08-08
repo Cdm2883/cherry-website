@@ -5,8 +5,13 @@
     "build": "node scripts/build.js",
     "clear": "node scripts/clear.js"
   },
+  "dependencies": {
+    "gsap": "^3.12.5",
+    "three": "^0.167.1"
+  },
   "devDependencies": {
     "@types/node": "^22.1.0",
+    "@types/three": "^0.167.1",
     "esbuild": "^0.23.0"
   }
 }

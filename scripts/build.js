@@ -12,7 +12,6 @@ clear();
 await exec("mkdocs build");
 await esbuild.build({
     entryPoints: [ "./src/index.js" ],
-    target: [ "chrome58", "firefox57", "safari11", "edge16" ],
     bundle: true,
     minify: true,
     outfile: 'site/assets/javascripts/main.js',
