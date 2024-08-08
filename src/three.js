@@ -3,6 +3,36 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
+import {ShaderPass} from "three/examples/jsm/postprocessing/ShaderPass.js";
+
+const motionBlurShader = {
+    uniforms: {
+        tDiffuse: { value: null },
+        velocity: { value: new THREE.Vector2(0, 0) }, // 摄像机速度
+        blurAmount: { value: 0.5 }, // 模糊强度
+    },
+    vertexShader: /* glsl */`
+        varying vec2 vUv;
+        void main() {
+            vUv = uv;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+    `,
+    fragmentShader: /* glsl */`
+        uniform sampler2D tDiffuse;
+        uniform vec2 velocity;
+        uniform float blurAmount;
+        varying vec2 vUv;
+
+        void main() {
+            vec4 color = texture2D(tDiffuse, vUv);
+            vec2 offset = velocity * blurAmount * 0.01;
+            vec4 blurredColor = texture2D(tDiffuse, vUv + offset);
+            blurredColor += texture2D(tDiffuse, vUv - offset);
+            gl_FragColor = mix(color, blurredColor, 0.5);
+        }
+    `,
+};
 
 export default class ThreeViewport {
     /** @param {HTMLCanvasElement} canvas */
@@ -13,6 +43,11 @@ export default class ThreeViewport {
         this.renderer = new THREE.WebGLRenderer({ antialias: true, canvas });
         this.composer = new EffectComposer(this.renderer);
         this.composer.addPass(new RenderPass(this.scene, this.camera));
+        this.composer.addPass(this.motionBlurPass = new ShaderPass(motionBlurShader));
+        {
+            this.previousCameraPosition = new THREE.Vector3();
+            this.velocity = new THREE.Vector2();
+        }
         this.resize();
         window.addEventListener('resize', this.resize.bind(this));
     }
@@ -53,8 +88,8 @@ export default class ThreeViewport {
         this.scene.add(ambientLight);
         {
             // const fog = 0x8b4fff;
-            const fog = 0xffc3d3;
-            // const fog = 0x654c52;
+            // const fog = 0xffc3d3;
+            const fog = 0x171843;
             this.scene.fog = new THREE.FogExp2(fog, 0.02);
             // this.scene.fog = new THREE.Fog(fog, 0.9, 64);
             this.scene.background = new THREE.Color(fog);
@@ -111,14 +146,11 @@ export default class ThreeViewport {
             const light = new THREE.PointLight(color, intensity, distance, decay);
             light.position.set(x, y, z);
             this.scene.add(light);
-            const helper = new THREE.PointLightHelper(light);
-            this.scene.add(helper);
         }
 
         this.camera.position.set(-34, -12, -0.1);
         this.camera.rotation.set(0, THREE.MathUtils.degToRad(270), 0);
 
-        this.scene.add(new THREE.CameraHelper(this.camera));
         // this.camera.position.z += -3;
 
         this.controller();
@@ -147,6 +179,10 @@ export default class ThreeViewport {
 
     animate() {
         requestAnimationFrame(this.animate.bind(this));
+
+        this.velocity.set(this.camera.position.z - this.previousCameraPosition.z, 0);
+        this.previousCameraPosition.copy(this.camera.position);
+        this.motionBlurPass.uniforms.velocity.value.copy(this.velocity);
 
         const computedZ = this.currentZ + (this.targetZ - this.currentZ) * this.damping;
         if (-17 <= computedZ && computedZ <= 64 * 2 - 60) this.camera.position.z = this.currentZ = computedZ;
