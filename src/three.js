@@ -185,7 +185,15 @@ export default class ThreeViewport {
         this.motionBlurPass.uniforms.velocity.value.copy(this.velocity);
 
         const computedZ = this.currentZ + (this.targetZ - this.currentZ) * this.damping;
-        if (-17 <= computedZ && computedZ <= 64 * 2 - 60) this.camera.position.z = this.currentZ = computedZ;
+        // 当接近边界时，应用一个缓动函数来逐渐减速
+        if (computedZ < -17) {
+            this.currentZ += (-17 - this.currentZ) * this.damping;
+        } else if (computedZ > 64 * 2 - 60) {
+            this.currentZ += ((64 * 2 - 60) - this.currentZ) * this.damping;
+        } else {
+            this.currentZ = computedZ;
+        }
+        this.camera.position.z = this.currentZ;
 
         this.composer.render();
     }
