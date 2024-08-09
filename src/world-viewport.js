@@ -34,7 +34,7 @@ const motionBlurShader = {
     `,
 };
 
-export default class ThreeViewport {
+export default class WorldViewport {
     /** @param {HTMLCanvasElement} canvas */
     constructor(canvas) {
         this.canvas = canvas;
@@ -229,8 +229,6 @@ export default class ThreeViewport {
         this.camera.position.set(-34, -12, -0.1);
         this.camera.rotation.set(0, THREE.MathUtils.degToRad(270), 0);
 
-        // this.camera.position.z += -3;
-
         this.controller();
         this.animate();
     }
@@ -249,12 +247,13 @@ export default class ThreeViewport {
         this.canvas.addEventListener('touchstart', event => this.previousX = event.touches[0].clientX);
         this.canvas.addEventListener('touchmove', event => {
             const currentX = event.touches[0].clientX;
-            if (this.previousX) this.targetZ += (this.previousX - currentX) * 0.02;
+            if (this.previousX) this.targetZ += (this.previousX - currentX) * 0.025;
             this.previousX = currentX;
         });
         window.addEventListener('touchend', () => this.previousX = null);
     }
 
+    renderPseudo;
     animate() {
         requestAnimationFrame(this.animate.bind(this));
 
@@ -274,6 +273,8 @@ export default class ThreeViewport {
         this.camera.position.z = this.currentZ;
 
         this.animatePetals();
+
+        if (this.renderPseudo) this.renderPseudo();
 
         this.composer.render();
     }
