@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import paths from "node:path";
+import { fileURLToPath } from "node:url";
 
 export default function clear() {
     deletePathForce("./site")
@@ -13,3 +14,5 @@ function deletePathForce(path) {
         .forEach(deletePathForce);
     fs.rmdirSync(path);
 }
+
+if (process.argv[1] === fileURLToPath(import.meta.url)) clear();
