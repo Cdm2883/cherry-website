@@ -1,0 +1,29 @@
+name: Build Demo
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11.0'
+          cache: 'pip'
+
+      - name: Install Material for MkDocs
+        run: pip install mkdocs-material
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install npm dependence
+        run: npm install
+
+      - name: Run build script
+        run: npm run build
