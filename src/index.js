@@ -13,19 +13,30 @@ if (WebGL.isWebGL2Available()) {
     layer.bind(world);
     console.log(layer);
 
-    const test1 = document.createElement('div');
-    test1.style.width = '10%';
-    test1.style.height = '10%';
-    test1.style.background = 'red';
-    test1.style.pointerEvents = 'fill';
-    layer.add(test1, { x: 0, y: 0, z: 0 });
-
-    const test2 = document.createElement('div');
-    test2.style.width = '5%';
-    test2.style.height = '5%';
-    test2.style.background = 'green';
-    test2.style.pointerEvents = 'fill';
-    layer.add(test2, { x: 0, y: 0, z: 1 });
+    {
+        const test = document.createElement('div');
+        test.style.width = '10%';
+        test.style.height = '10%';
+        test.style.background = 'red';
+        test.style.pointerEvents = 'fill';
+        layer.add(test, { x: 0, y: 0, z: 0 });
+    }
+    {
+        const test = document.createElement('div');
+        test.style.width = '5%';
+        test.style.height = '5%';
+        test.style.background = 'green';
+        test.style.pointerEvents = 'fill';
+        layer.add(test, { x: 0, y: 0, z: 1 });
+    }
+    {
+        const test = document.createElement('div');
+        test.style.width = '1%';
+        test.style.height = '1%';
+        test.style.background = 'blue';
+        test.style.pointerEvents = 'fill';
+        layer.add(test, { x: 4 * Pseudo3DLayer.PixelToBlockMultiple, y: 2 * Pseudo3DLayer.PixelToBlockMultiple, z: 2 });
+    }
 } else {
     document.body.appendChild(WebGL.getWebGL2ErrorMessage());
 }
