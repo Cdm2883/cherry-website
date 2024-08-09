@@ -3,7 +3,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
-import {ShaderPass} from "three/examples/jsm/postprocessing/ShaderPass.js";
+import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
 
 const motionBlurShader = {
     uniforms: {
@@ -84,12 +84,19 @@ export default class ThreeViewport {
             this.scene.add(scene);
         });
 
+        {
+            const floorGeometry = new THREE.BoxGeometry(9.1, 1, 9.2);
+            const floorMaterial = new THREE.MeshBasicMaterial( { color: 0x686587 } );
+            const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+            floor.position.set(-22.017, -15.498, 18.078);
+            this.scene.add(floor);
+        }
+
         const ambientLight = new THREE.AmbientLight(0xFFFFFF, 1);
         this.scene.add(ambientLight);
         {
-            // const fog = 0x8b4fff;
-            // const fog = 0xffc3d3;
-            const fog = 0x171843;
+            // const fog = 0xffc3d3;  // pink
+            const fog = 0x171843;  // dark blue
             this.scene.fog = new THREE.FogExp2(fog, 0.02);
             // this.scene.fog = new THREE.Fog(fog, 0.9, 64);
             this.scene.background = new THREE.Color(fog);
@@ -140,6 +147,10 @@ export default class ThreeViewport {
             [ -20.488, -10.795, 68.497, LightColors.Lantern ],
             [ -26.488, -10.795, 73.497, LightColors.Lantern ],
             [ -20.488, -10.795, 78.497, LightColors.Lantern ],
+            // === HOUSE ===
+            [ -11.488, -4.795, 66.497, LightColors.Lantern ],
+            [ -12.488, -4.795, 67.497, LightColors.Lantern ],
+            [ -14.488, -8.795, 58.497, LightColors.Lantern ],
             // [ , LightColors.Lantern ],
         ];
         for (const [ x, y, z, color, intensity = 8, distance = 0, decay = 1 ] of lights) {
@@ -152,6 +163,7 @@ export default class ThreeViewport {
         {
             const regions = [
                 [ [ -18.383, -6.058, -8.695 ], [ -25.021, -5.090, 1.545 ] ],
+                [ [ -12.133, -6.117, 5.980 ], [ -17.765, -3.190, 17.714 ] ],
             ].map(
                 ([ [ minX, minY, minZ ], [ maxX, maxY, maxZ ] ]) =>
                 ({ min: { x: minX, y: minY, z: minZ }, max: { x: maxX, y: maxY, z: maxZ } })
