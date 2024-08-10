@@ -8,21 +8,19 @@ theme:
   language: zh
   logo: assets/images/title.png
   favicon: assets/images/logo.png
+  # noinspection YAMLSchemaValidation
   palette:
     - media: "(prefers-color-scheme)"
       toggle:
         icon: material/brightness-auto
         name: 切换到日间模式
     - media: "(prefers-color-scheme: light)"
-      primary: teal
-      accent: teal
+      scheme: default
       toggle:
         icon: material/brightness-7
         name: 切换到深色模式
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: teal
-      accent: teal
       toggle:
         icon: material/brightness-4
         name: 切换到系统默认

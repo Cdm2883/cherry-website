@@ -8,6 +8,7 @@ export default class Pseudo3DLayer {
     bind(world) {
         this.world = world;
         this.originX = world.camera.position.z;
+        // noinspection JSUndefinedPropertyAssignment
         world.renderPseudo = this.render.bind(this);
     }
 

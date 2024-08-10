@@ -169,7 +169,7 @@ export default class WorldViewport {
                 ({ min: { x: minX, y: minY, z: minZ }, max: { x: maxX, y: maxY, z: maxZ } })
             );
 
-            const petalTexture = new THREE.TextureLoader().load('assets/images/cherry_petal_atlas.png');
+            const petalTexture = new THREE.TextureLoader().load('assets/images/home/cherry_petal_atlas.png');
             petalTexture.magFilter = THREE.NearestFilter;
             petalTexture.minFilter = THREE.NearestFilter;
             const petalMaterial = new THREE.MeshBasicMaterial({
