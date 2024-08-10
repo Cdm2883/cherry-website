@@ -3,15 +3,15 @@ on: [push]
 
 jobs:
   build:
-    runs-on: ubuntu20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout master
         uses: https://gitea.com/actions/checkout@v4
 
       - name: Setup Python
-        uses: https://gitea.com/actions/setup-python@v2
+        uses: https://gitea.com/actions/setup-python@v4
         with:
-          python-version: 3.9.1
+          python-version: '3.9'
 
       - name: Install Material for MkDocs
         run: pip install mkdocs-material
