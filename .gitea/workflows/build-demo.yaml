@@ -9,12 +9,12 @@ jobs:
         uses: https://gitea.com/actions/checkout@v4
 
       - name: Setup Python
-        uses: https://gitea.com/actions/setup-python@v4
-        with:
-          python-version: '3.9'
+        run: |
+          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+          python3.9 get-pip.py
 
       - name: Install Material for MkDocs
-        run: pip install mkdocs-material
+        run: python3.9 -m pip install mkdocs-material
 
       - name: Setup Node.js
         uses: https://gitea.com/actions/setup-node@v4
