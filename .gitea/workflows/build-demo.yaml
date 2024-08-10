@@ -8,8 +8,8 @@ jobs:
       - name: Checkout master
         uses: https://gitea.com/actions/checkout@v4
 
-      - name: Install pip
-        run: apt-get install python3-pip
+      - name: Setup Python
+        uses: https://gitea.com/actions/setup-python@v1
 
       - name: Install Material for MkDocs
         run: pip install mkdocs-material
