@@ -34,7 +34,28 @@ const motionBlurShader = {
     `,
 };
 
+class FpsProfiler {
+    count;
+    static NowProvider = performance || Date;
+    static Now = () => FpsProfiler.NowProvider.now();
+    prevTime = FpsProfiler.Now();
+    frames = 0;
+    end() {
+        this.frames++;
+        const time = FpsProfiler.Now();
+        if (time >= this.prevTime + 1000) {
+            this.count = (this.frames * 1000) / (time - this.prevTime);
+            this.prevTime = time;
+            this.frames = 0;
+        }
+
+        console.log(`fps: ${this.count}`);
+    }
+}
+
 export default class WorldViewport {
+    fps = new FpsProfiler();
+    highQuality = true;
     /** @param {HTMLCanvasElement} canvas */
     constructor(canvas) {
         this.canvas = canvas;
@@ -53,9 +74,10 @@ export default class WorldViewport {
     }
     resize() {
         const { innerWidth: width, innerHeight: height } = window;
-        this.renderer.setPixelRatio(window.devicePixelRatio);
+        const dpi = this.highQuality ? window.devicePixelRatio : 1;
+        this.renderer.setPixelRatio(dpi);
         this.renderer.setSize(width, height);
-        this.composer.setPixelRatio(window.devicePixelRatio);
+        this.composer.setPixelRatio(dpi);
         this.composer.setSize(width, height);
         this.camera.aspect = width / height;
         this.camera.updateProjectionMatrix();
@@ -72,16 +94,23 @@ export default class WorldViewport {
         this.composer.addPass(this.bloomPass);
     }
 
+    /** @type FullscreenLoading */
+    loadingIndicator;
+
     setup() {
         const loader = new GLTFLoader();
+        this.loadingIndicator.loading();
         loader.load("assets/models/website_viewport_1.glb", data => {
             const scene = data.scene;
             this.scene.add(scene);
+            this.loadingIndicator.loaded();
         });
+        this.loadingIndicator.loading();
         loader.load("assets/models/website_viewport_2.glb", data => {
             const scene = data.scene;
             scene.position.set(0, 0, 64);
             this.scene.add(scene);
+            this.loadingIndicator.loaded();
         });
 
         {
@@ -255,7 +284,11 @@ export default class WorldViewport {
 
     renderPseudo;
     animate() {
-        requestAnimationFrame(this.animate.bind(this));
+        const highQuality = this.highQuality;
+        if (highQuality && this.fps.count < 25) this.highQuality = false;
+        else if (!highQuality && this.fps.count >= 40) this.highQuality = true;
+        // this.highQuality = this.fps.count >= 25;
+        if (highQuality !== this.highQuality) this.resize();
 
         this.velocity.set(this.camera.position.z - this.previousCameraPosition.z, 0);
         this.previousCameraPosition.copy(this.camera.position);
@@ -277,6 +310,9 @@ export default class WorldViewport {
         if (this.renderPseudo) this.renderPseudo();
 
         this.composer.render();
+
+        this.fps.end();
+        requestAnimationFrame(this.animate.bind(this));
     }
 }
 

@@ -1,14 +1,20 @@
 import WebGL from "three/examples/jsm/capabilities/WebGL.js";
 import WorldViewport from "./world-viewport.js";
 import Pseudo3DLayer from "./pseudo-3d-layer.js";
+import FullscreenLoading from "./loading.js";
 
 if (!WebGL.isWebGL2Available()) {
     location.replace('./webgl-less.html');
     throw 0;
 }
 
+const loading = new FullscreenLoading();
+// setTimeout(() => loading.loading(), 1000);
+// setTimeout(() => loading.loaded(), 10000);
+
 const canvas = document.getElementById('three-viewport');
 const world = new WorldViewport(canvas);
+world.loadingIndicator = loading;
 world.setup();
 console.log(world);
 
