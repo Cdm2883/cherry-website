@@ -27,8 +27,8 @@ jobs:
       - name: Run build script
         run: npm run build
 
-      - name: Upload Output
-        uses: https://gitea.com/actions/upload-artifact@v4
+      - name: Upload artifact
+        uses: https://gitea.com/actions/upload-artifact@v3
         with:
           name: static-website
           path: site/
