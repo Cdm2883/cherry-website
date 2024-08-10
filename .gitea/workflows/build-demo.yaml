@@ -8,11 +8,8 @@ jobs:
       - name: Checkout master
         uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.9'
-          cache: 'pip'
+      - name: Install Python
+        run: sudo apt-get install python3.9
 
       - name: Install Material for MkDocs
         run: pip install mkdocs-material
