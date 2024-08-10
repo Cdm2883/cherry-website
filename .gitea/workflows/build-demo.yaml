@@ -4,12 +4,14 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
+    container:
+      image: python:3.9
     steps:
       - name: Checkout master
         uses: https://gitea.com/actions/checkout@v4
 
-      - name: Install Python
-        run: sudo apt-get install python3.9
+      - name: Check the Python installation
+        run: python3 --version
 
       - name: Install Material for MkDocs
         run: pip install mkdocs-material
